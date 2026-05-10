@@ -1,10 +1,11 @@
 from datetime import datetime
+from typing import List
 
 from airflow.decorators import dag, task
 
 
 class BinaryHeap:
-    def __init__(self, init_arr: list[int] = None):
+    def __init__(self, init_arr: List[int] = None):
         self.heap = []
         self.heap_size = 0
         if init_arr is not None:
@@ -12,7 +13,7 @@ class BinaryHeap:
                 print(self.heap)
                 self.add(init_arr[i])
 
-    def __call__(self) -> list[int]:
+    def __call__(self) -> List[int]:
         return self.heap
 
     def swap(self, i: int, j: int) -> None:
@@ -60,11 +61,11 @@ class BinaryHeap:
 )
 def factorial() -> None:
     @task
-    def get_numbers() -> list[int]:
-        return [12, 5, 9, 3, 14, 8, 6, 11, 2, 10, 7, 4, 15, 1, 13, 16, 18, 17, 20, 19]
+    def get_numbers() -> List[int]:
+        return [12, 5, 9, 3, 14, 8, 6, 11, 22, 10, 7, 4, 15, 11, 13, 16, 18, 17, 20, 19]
 
     @task
-    def extract_minimum(numbers: list[int]) -> int:
+    def extract_minimum(numbers: List[int]) -> int:
         heap = BinaryHeap(numbers)
         min_number = heap.extract_min()
         print(f"Heap after initialization: {heap()}")
