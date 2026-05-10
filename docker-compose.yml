@@ -91,7 +91,7 @@ services:
 
   spark-master:
     container_name: spark-master
-    image: apache/spark:latest
+    image: apache/spark:3.5.8
     depends_on:
       postgres:
         condition: service_healthy
@@ -102,7 +102,7 @@ services:
 
   spark-worker:
     container_name: spark-worker
-    image: apache/spark:latest
+    image: apache/spark:3.5.8
     depends_on:
       - spark-master
     ports:
