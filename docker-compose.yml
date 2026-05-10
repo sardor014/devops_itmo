@@ -62,6 +62,7 @@ x-airflow-common:
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
+    - ${AIRFLOW_PROJ_DIR:-.}/spark:/opt/airflow/spark
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"
@@ -69,6 +70,8 @@ x-airflow-common:
     &airflow-common-depends-on
     postgres:
       condition: service_healthy
+    spark-worker:
+      condition: service_started
 
 services:
   postgres:
@@ -85,6 +88,26 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+
+  spark-master:
+    container_name: spark-master
+    image: apache/spark:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '4040:8080'
+      - '7077:7077'
+    command: '/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master'
+
+  spark-worker:
+    container_name: spark-worker
+    image: apache/spark:latest
+    depends_on:
+      - spark-master
+    ports:
+      - "7000:7000"
+    command: '/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077'
 
   airflow-webserver:
     <<: *airflow-common

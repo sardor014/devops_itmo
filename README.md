@@ -21,6 +21,19 @@ DAG состоит из четырех задач:
 Factorial of minimum number 3 is 6
 ```
 
+# DAG spark_factorial
+
+DAG запускает Spark job из файла `spark/spark_factorial_job.py` через `SparkSubmitOperator`.
+
+Spark job через `SparkSession` создает DataFrame из массива чисел, находит минимум и считает факториал минимума.
+
+Результат выполнения:
+
+```text
+Minimum number: 3
+Factorial of minimum number 3 is 6
+```
+
 # Локальный запуск
 
 Создать файл `.env`:
@@ -47,7 +60,16 @@ http://localhost:8080
 airflow / airflow
 ```
 
-После входа нужно найти DAG `factorial`, включить его и запустить вручную через `Trigger DAG`
+Для запуска Spark DAG нужно создать подключение в Airflow: `Admin -> Connections -> + New`.
+
+```text
+Connection Id: spark_local
+Connection Type: Spark
+Host: spark://spark-master
+Port: 7077
+```
+
+После входа нужно найти DAG `spark_factorial`, включить его и запустить вручную через `Trigger DAG`
 
 # Остановка
 
