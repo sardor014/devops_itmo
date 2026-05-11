@@ -1,0 +1,46 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    runs-on: [self-hosted, our-teams-runner]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check directories existence
+        run: |
+          if [ ! -d "dags/" ] || [ ! -d "spark/" ]; then
+            echo "Error: Directories dags/ or spark/ are missing!"
+            exit 1
+          fi
+          echo "Test passed: dags/ and spark/ exist."
+
+  build:
+    needs: test
+    runs-on: [self-hosted, our-teams-runner]
+    if: ${{ !startsWith(github.ref, 'refs/heads/feature/') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Build Docker image
+        run: docker build -t my_app_image .
+
+  deploy:
+    needs: build
+    runs-on: [self-hosted, my-custom-runner]
+    if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Deploy application
+        run: |
+          echo "Deploying application...."
+          docker-compose up -d
+          echo "Application successfully deployed!" # Деплой сервиса [cite: 191, 193, 194]

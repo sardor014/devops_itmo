@@ -1,0 +1,14 @@
+name: Clear Deployment
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  clear-job:
+    runs-on: [self-hosted, our-teams-runner]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Clear deployment
+        run: docker-compose rm -sf
