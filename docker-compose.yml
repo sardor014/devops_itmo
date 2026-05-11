@@ -106,7 +106,7 @@ services:
     depends_on:
       - spark-master
     ports:
-      - "7000:7000"
+      - "7001:7000"
     command: '/opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077'
 
   airflow-webserver:
